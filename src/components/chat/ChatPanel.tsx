@@ -11,7 +11,7 @@ type Msg = { role: 'user' | 'assistant'; content: string };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 
-function parseActions(content: string): { type: string; task_title: string; updates?: Record<string, string> }[] {
+function parseActions(content: string): { type: string; task_title?: string; title?: string; name?: string; task_name?: string; updates?: Record<string, string> }[] {
   const actions: any[] = [];
   const regex = /```action\s*\n([\s\S]*?)```/g;
   let match;
@@ -40,8 +40,10 @@ export const ChatPanel = () => {
   const executeActions = useCallback((content: string) => {
     const actions = parseActions(content);
     for (const action of actions) {
-      const task = tasks.find(t => t.title.toLowerCase() === action.task_title?.toLowerCase());
-      if (!task) { toast({ title: `Task "${action.task_title}" not found`, variant: 'destructive' }); continue; }
+      const resolvedTitle = action.task_title || action.title || action.name || action.task_name;
+      if (!resolvedTitle) continue;
+      const task = tasks.find(t => t.title.toLowerCase() === resolvedTitle.toLowerCase());
+      if (!task) { toast({ title: `Task "${resolvedTitle}" not found`, variant: 'destructive' }); continue; }
       if (action.type === 'edit_task' && action.updates) {
         updateTask(task.id, action.updates);
         toast({ title: `Task "${task.title}" updated` });
