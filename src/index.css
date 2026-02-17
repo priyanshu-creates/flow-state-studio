@@ -52,7 +52,11 @@
     --priority-low: 142 60% 45%;
     --column-todo: 258 75% 60%;
     --column-progress: 38 92% 55%;
-    --column-done: 142 60% 45%;
+    --column-done: 195 85% 50%;
+    --column-completed: 142 70% 50%;
+
+    --gradient-hero: linear-gradient(135deg, hsl(258 75% 60% / 0.15), hsl(195 85% 50% / 0.1), hsl(142 70% 50% / 0.05));
+    --gradient-card-hover: linear-gradient(135deg, hsl(258 75% 60% / 0.08), hsl(195 85% 50% / 0.05));
   }
 }
 
@@ -83,5 +87,20 @@
   }
   .glow-sm {
     box-shadow: 0 0 10px hsl(var(--primary) / 0.2);
+  }
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+  .column-glow-todo {
+    box-shadow: 0 0 20px hsl(var(--column-todo) / 0.15);
+  }
+  .column-glow-progress {
+    box-shadow: 0 0 20px hsl(var(--column-progress) / 0.15);
+  }
+  .column-glow-done {
+    box-shadow: 0 0 20px hsl(var(--column-done) / 0.15);
+  }
+  .column-glow-completed {
+    box-shadow: 0 0 20px hsl(var(--column-completed) / 0.15);
   }
 }

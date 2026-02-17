@@ -35,8 +35,9 @@ export const TaskCard = ({ task, onEdit, onDelete }: TaskCardProps) => {
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       className={cn(
-        "glass-surface p-4 group cursor-grab active:cursor-grabbing",
-        isDragging && "opacity-50 shadow-2xl ring-2 ring-primary/30"
+        "glass-surface p-4 group cursor-grab active:cursor-grabbing hover:border-primary/30 hover:shadow-[0_0_15px_hsl(var(--primary)/0.1)] transition-all duration-200",
+        isDragging && "opacity-50 shadow-2xl ring-2 ring-primary/30",
+        task.status === 'completed' && "border-column-completed/30 bg-column-completed/5"
       )}
     >
       <div className="flex items-start gap-3">

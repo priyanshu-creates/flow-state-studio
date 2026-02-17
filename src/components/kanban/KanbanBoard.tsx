@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { DndContext, DragEndEvent, PointerSensor, useSensor, useSensors, DragOverlay, DragStartEvent } from '@dnd-kit/core';
 import { useTasks } from '@/hooks/useTasks';
 import { KanbanColumn } from './KanbanColumn';
@@ -8,12 +8,23 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search, Filter } from 'lucide-react';
 import { TaskCard } from './TaskCard';
+import confetti from 'canvas-confetti';
 
 const columns: { status: TaskStatus; title: string; color: string }[] = [
   { status: 'todo', title: 'To Do', color: 'bg-column-todo' },
   { status: 'in_progress', title: 'In Progress', color: 'bg-column-progress' },
   { status: 'done', title: 'Done', color: 'bg-column-done' },
+  { status: 'completed', title: 'Completed ✨', color: 'bg-column-completed' },
 ];
+
+const fireConfetti = () => {
+  const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+  confetti({ ...defaults, particleCount: 50, origin: { x: 0.3, y: 0.6 } });
+  confetti({ ...defaults, particleCount: 50, origin: { x: 0.7, y: 0.6 } });
+  setTimeout(() => {
+    confetti({ ...defaults, particleCount: 30, origin: { x: 0.5, y: 0.4 }, colors: ['#a855f7', '#06b6d4', '#22c55e', '#f59e0b'] });
+  }, 150);
+};
 
 export const KanbanBoard = () => {
   const { tasks, addTask, updateTask, deleteTask, moveTask } = useTasks();
@@ -35,17 +46,20 @@ export const KanbanBoard = () => {
 
   const handleDragStart = (event: DragStartEvent) => setActiveId(event.active.id as string);
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
     setActiveId(null);
     const { active, over } = event;
     if (!over) return;
     const taskId = active.id as string;
     const targetStatus = over.id as TaskStatus;
-    if (['todo', 'in_progress', 'done'].includes(targetStatus)) {
+    if (['todo', 'in_progress', 'done', 'completed'].includes(targetStatus)) {
       const task = tasks.find(t => t.id === taskId);
-      if (task && task.status !== targetStatus) moveTask(taskId, targetStatus);
+      if (task && task.status !== targetStatus) {
+        moveTask(taskId, targetStatus);
+        if (targetStatus === 'completed') fireConfetti();
+      }
     }
-  };
+  }, [tasks, moveTask]);
 
   const openAdd = (status: TaskStatus) => {
     setEditingTask(null);
@@ -69,7 +83,9 @@ export const KanbanBoard = () => {
     <div className="flex-1 p-6 overflow-auto">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-display font-bold text-foreground mb-1">Project Board</h1>
+        <h1 className="text-3xl font-display font-bold text-foreground mb-1 bg-gradient-to-r from-primary via-column-done to-column-completed bg-clip-text text-transparent">
+          Project Board
+        </h1>
         <p className="text-muted-foreground text-sm">Organize and track your tasks</p>
       </div>
 
@@ -81,7 +97,7 @@ export const KanbanBoard = () => {
             placeholder="Search tasks..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="pl-9 bg-secondary/50 border-glass-border"
+            className="pl-9 bg-secondary/50 border-glass-border focus:ring-primary/40"
           />
         </div>
         <div className="flex items-center gap-2">
@@ -102,7 +118,7 @@ export const KanbanBoard = () => {
 
       {/* Board */}
       <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <div className="flex gap-6 overflow-x-auto pb-4">
+        <div className="flex gap-5 overflow-x-auto pb-4">
           {columns.map(col => (
             <KanbanColumn
               key={col.status}
