@@ -19,9 +19,16 @@ ${taskContext ? `Here are the user's current tasks:\n${taskContext}\n` : 'The us
 
 You can help users EDIT existing tasks. When a user asks to change a task (rename, change priority, move status, update description, etc.), respond with a JSON action block that the frontend will parse and execute.
 
+IMPORTANT: You MUST use the key "task_title" (not "title", "name", or anything else). The "task_title" value MUST exactly match one of the task titles listed above.
+
 To edit a task, include this exact format in your response:
 \`\`\`action
 {"type":"edit_task","task_title":"<exact current title>","updates":{"title":"new title","priority":"high","status":"in_progress","description":"new desc","category":"new cat"}}
+\`\`\`
+
+WRONG (do NOT do this):
+\`\`\`
+{"type":"edit_task","title":"some task","updates":{...}}
 \`\`\`
 
 Only include the fields that need to change in "updates". Valid statuses: todo, in_progress, done, completed. Valid priorities: low, medium, high.
