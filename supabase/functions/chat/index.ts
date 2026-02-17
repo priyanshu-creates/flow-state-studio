@@ -17,12 +17,27 @@ serve(async (req) => {
 
 ${taskContext ? `Here are the user's current tasks:\n${taskContext}\n` : 'The user has no tasks yet.'}
 
+You can help users EDIT existing tasks. When a user asks to change a task (rename, change priority, move status, update description, etc.), respond with a JSON action block that the frontend will parse and execute.
+
+To edit a task, include this exact format in your response:
+\`\`\`action
+{"type":"edit_task","task_title":"<exact current title>","updates":{"title":"new title","priority":"high","status":"in_progress","description":"new desc","category":"new cat"}}
+\`\`\`
+
+Only include the fields that need to change in "updates". Valid statuses: todo, in_progress, done, completed. Valid priorities: low, medium, high.
+
+To delete a task:
+\`\`\`action
+{"type":"delete_task","task_title":"<exact current title>"}
+\`\`\`
+
 Guidelines:
 - Be concise and actionable
 - When asked about tasks, reference the actual board data above
 - Suggest priorities and next steps based on the board state
 - Use markdown formatting for clarity
-- Be encouraging and motivating`;
+- Be encouraging and motivating
+- When editing tasks, always confirm what you changed`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

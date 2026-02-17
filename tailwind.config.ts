@@ -72,6 +72,7 @@ export default {
           todo: "hsl(var(--column-todo))",
           progress: "hsl(var(--column-progress))",
           done: "hsl(var(--column-done))",
+          completed: "hsl(var(--column-completed))",
         },
       },
       borderRadius: {

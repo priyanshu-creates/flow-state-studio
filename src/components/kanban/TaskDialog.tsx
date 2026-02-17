@@ -63,6 +63,7 @@ export const TaskDialog = ({ open, onClose, onSave, task, defaultStatus = 'todo'
                 <SelectItem value="todo">To Do</SelectItem>
                 <SelectItem value="in_progress">In Progress</SelectItem>
                 <SelectItem value="done">Done</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
               </SelectContent>
             </Select>
             <Select value={priority} onValueChange={v => setPriority(v as TaskPriority)}>
